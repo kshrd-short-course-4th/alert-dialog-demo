@@ -1,11 +1,16 @@
 package com.example.rathana.alertdialogdemo;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.rathana.alertdialogdemo.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,6 +189,51 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onShowCustomDialog(View view) {
-
+        createCustomDialog();
     }
+
+    private void createCustomDialog() {
+
+        AlertDialog.Builder builder =new AlertDialog.Builder(this);
+
+        builder.setTitle("Sign In");
+
+        ///custom layout for alertDialog
+        View view= LayoutInflater.from(this).inflate(
+                R.layout.custom_dialog_layout,
+                null
+        );
+        final EditText mUsername,mPassword;
+        mUsername=view.findViewById(R.id.username);
+        mPassword=view.findViewById(R.id.password);
+
+        builder.setView(view);
+
+        builder.setPositiveButton("sign in", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO LOGIN
+                User user=new User(mUsername.getText().toString(),
+                        mPassword.getText().toString());
+                loginSuccess(user);
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Cancel
+            }
+        });
+        builder.create().show();
+    }
+
+    private void loginSuccess(User user) {
+        if(userMemory.getUsername().equals(user.getUsername()) &&
+                userMemory.getPassword().equals(user.getPassword()))
+        {
+            startActivity(new Intent(this,
+                    HomeActivity.class));
+        }
+    }
+
+    private static User userMemory = new User("admin","admin");
 }
